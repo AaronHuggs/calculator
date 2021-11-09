@@ -6,7 +6,32 @@
         <link rel='stylesheet' href='./styles/style.css'>
     </head>
     <body>
-        
+        <main id='calculator'>
+            <div id='display'>
+
+            </div>
+            <div id='numpad'>
+                <button onclick="clickHandler(1)">1</button>
+                <button onclick="clickHandler(2)">2</button>
+                <button onclick="clickHandler(3)">3</button>
+                <button onclick="clickHandler(4)">4</button>
+                <button onclick="clickHandler(5)">5</button>
+                <button onclick="clickHandler(6)">6</button>
+                <button onclick="clickHandler(7)">7</button>
+                <button onclick="clickHandler(8)">8</button>
+                <button onclick="clickHandler(9)">9</button>
+                <button onclick="clickHandler(0)">0</button>
+                
+            </div>
+            <div id='operations'>
+                <button onclick='clearDisplay()'>C</button>
+                <button id='+'>+</button>
+                <button id='-'>-</button>
+                <button id='*'>*</button>
+                <button id='/'>/</button>
+                <button id='='>=</button>
+            </div>
+        </main>
         <script src='./scripts/script.js'></script>
     </body>
 </html>

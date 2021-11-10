@@ -103,8 +103,9 @@ function operate(operator,displayed,stored) {
     }
 }
 
+//Handles when digits are clicked
 function clickHandler(num) {
-  if (displayPopulated){
+  if (displayPopulated){ //<-- If displayValue already has a digit, add more, else overwrite
     displayValue.push(num);
   }
   else {
@@ -112,10 +113,10 @@ function clickHandler(num) {
     displayPopulated = true;
     clickHandler(num);
   } 
-  display.innerHTML = displayValue.join('');
-  
+  display.innerHTML = displayValue.join(''); //<-- Combine digits (elements in displayValue array) to form single number
 }
 
+//Clears the display and stored values, resets calculator back to start, when C is pressed.
 function clearDisplay() {
   storedValue = [];
   displayValue = [];

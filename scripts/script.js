@@ -1,66 +1,107 @@
-let displayValue = [];
-let storedValues = [];
-let storedOperations = [];
+let inputValue = [];
+let displayValue = 0;
+let storedValue = 0;
 let resultValue = 0;
-
+let lastPressed = null;
+let lastOperator = null;
+let clearMe = false;
 
 const display = document.getElementById('display');
 window.onload = clearDisplay;
 
-function clickHandler(number) {
-    if (displayValue[0] === 0)
-        displayValue.pop();
-    displayValue.push(number);
-    display.innerHTML = displayValue.join('');
-}
+const debugValues = document.getElementById('debug');
 
 function clearDisplay() {
-    displayValue = [];
-    displayValue.push(0);
-    display.innerHTML = displayValue.join('');
-    storedValues = [];
-    storedOperations = [];
+    inputValue = [];
+    displayValue = 0;           
+    storedValue = 0;
+    resultValue = 0;
+    lastPressed = null;
+    lastOperator = null;
+    clearMe = false;
+    display.innerHTML = displayValue;
+
+    updateDebug();
 }
 
-
-function add() {
-    storedOperations.push('+');
-    storedValues.push(displayValue.join(''));
-    storedValues = storedValues.map(Number);
-    displayValue = [];
-}
-
-function subtract() {
-    storedOperations.push('-');
-    storedValues.push(displayValue.join(''));
-    storedValues = storedValues.map(Number);
-    displayValue = [];
-}
-
-function operate() {
-    let savedDisplay = parseInt(displayValue.join(''));
-    if (isNaN(savedDisplay)) savedDisplay = 0;
-    let result = storedValues[0];
-    for (let i = 0; i < storedOperations.length-1; i++) {
+function clickHandler(number) {
+    
+    if (lastPressed === 'num') {
         
-        if (storedOperations[i] === '+') {
-            result += storedValues[i+1];
-        }
-        else if (storedOperations[i] === '-') {
-            result -= storedValues[i+1];
-        }
     }
-    if (storedOperations[storedOperations.length-1] === '+') {
-        result += savedDisplay;
+    else if (lastPressed === 'add') {
+        inputValue = [];
+        displayValue = 0;
     }
-    if (storedOperations[storedOperations.length-1] === '-') {
-        result -= savedDisplay;
+    else if (lastPressed === 'calc') {
+        inputValue = [];
+        displayValue = 0;
+        storedValue = 0;
+
     }
-    resultValue = result;
-    displayResult();
+    else {
+        displayValue[0] = number;
+    }
+    lastPressed = 'num';
+
+    inputValue.push(number);
+    displayValue = inputValue.join('');
+    displayValue = parseInt(displayValue);
+    display.innerHTML = displayValue;
+
+    updateDebug();
 }
 
+function addClicked() {
+    if (lastPressed === 'num') {
+        storedValue = displayValue;
+    }
+    else if (lastPressed === 'add') {
 
-function displayResult() {
-    display.innerHTML = resultValue;
+    }
+    else if (lastPressed === 'calc') {
+        
+        storedValue = displayValue;
+        
+
+    }
+    lastPressed = 'add';
+    lastOperator = 'add';
+
+    updateDebug();
+}
+
+function calculate() {
+    if (lastPressed === 'num') {
+        if (lastOperator === 'add') {
+            displayValue += storedValue;
+            display.innerHTML = displayValue;
+        }
+    }
+    else if (lastPressed === 'add') {
+        displayValue += storedValue;
+        display.innerHTML = displayValue;
+        lastOperator = 'add';
+    }
+    else if (lastPressed === 'calc') {
+        if (lastOperator === 'add') {
+            newdisplayValue = inputValue.join('');
+            newdisplayValue = parseInt(newdisplayValue);
+            storedValue = displayValue;
+            displayValue += newdisplayValue;
+
+            display.innerHTML = displayValue;
+        }
+    }
+    lastPressed = 'calc';
+    updateDebug();
+}
+
+function updateDebug() {
+    debugValues.innerHTML = `
+    inputValue: ${inputValue}<br>
+    displayValue: ${displayValue}<br>
+    storedValue: ${storedValue}<br>
+    lastPressed: ${lastPressed}<br>
+    lastOperator: ${lastOperator}<br>`
 }

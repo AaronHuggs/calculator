@@ -11,7 +11,7 @@ window.onload = clearDisplay;
 window.addEventListener("keydown", function (event) {
     if (!isNaN(event.key)) {
         let pressedNumber = event.key;
-        pressedNumber = parseInt(pressedNumber);
+        pressedNumber = parseFloat(pressedNumber);
         clickHandler(pressedNumber);
     }
     else {
@@ -22,6 +22,7 @@ window.addEventListener("keydown", function (event) {
             case '/': divClicked(); break;
             case 'Enter': calculate(); break;
             case 'Escape': clearDisplay(); break;
+            case '.': clickHandler('.'); break;
             default: break;
         }
     }
@@ -36,23 +37,48 @@ function clearDisplay() {
     resultValue = 0;
     lastPressed = null;
     lastOperator = null;
-    display.innerHTML = displayValue;
+    display.innerHTML = roundNumber(displayValue);
     document.getElementById('+').disabled = false;
     document.getElementById('-').disabled = false;
     document.getElementById('*').disabled = false;
     document.getElementById('/').disabled = false;
     updateDebug();
 }
-
 function clickHandler(number) {
     if (lastPressed === 'add' || lastPressed === 'sub' || lastPressed === 'mul' || lastPressed === 'div') {
-        inputValue = [];
-        displayValue = 0;
+        if (inputValue[inputValue.length-1] !== '.') {
+            inputValue = [];
+            displayValue = 0;
+        }
+        if (number === '.') {
+            if (inputValue.length === 0) {
+                inputValue.push(0);
+            }
+            if (!inputValue.includes('.')) {
+                inputValue.push(number);
+                displayValue = inputValue.join('');
+            }
+            display.innerHTML = displayValue;
+            lastPressed === '.';
+            return;
+        }
     }
     else if (lastPressed === 'calc') {
         inputValue = [];
         displayValue = 0;
         storedValue = 0;
+    }
+    else if (number === '.') {
+        if (inputValue.length === 0) {
+            inputValue.push(0);
+        }
+        if (!inputValue.includes('.')) {
+            inputValue.push(number);
+            displayValue = inputValue.join('');
+        }
+        display.innerHTML = displayValue;
+        return;
+        
     }
     else {
         displayValue[0] = number;
@@ -61,8 +87,8 @@ function clickHandler(number) {
 
     inputValue.push(number);
     displayValue = inputValue.join('');
-    displayValue = parseInt(displayValue);
-    display.innerHTML = displayValue
+    displayValue = parseFloat(displayValue);
+    display.innerHTML = roundNumber(displayValue);
 
     document.getElementById('+').disabled = false;
     document.getElementById('-').disabled = false;
@@ -75,12 +101,12 @@ function clickHandler(number) {
 function backspace() {
     inputValue.pop();
     displayValue = inputValue.join('');
-    displayValue = parseInt(displayValue);
+    displayValue = parseFloat(displayValue);
     if (isNaN(displayValue)) {
         displayValue = 0;
         inputValue = [];
     }
-    display.innerHTML = displayValue;
+    display.innerHTML = roundNumber(displayValue);
     updateDebug();
 }
 
@@ -88,20 +114,20 @@ function addClicked() {
     if (lastPressed === 'num') {
         if (lastOperator === 'add') {
             displayValue += storedValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'sub') {
             displayValue = storedValue - displayValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'mul') {
             displayValue = storedValue * displayValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'div') {
             if (displayValue !== 0) {
                 displayValue = storedValue / displayValue;
-                display.innerHTML = displayValue
+                display.innerHTML = roundNumber(displayValue)
             }
             else {
                 display.innerHTML = 'Cannot divide by zero';
@@ -133,20 +159,20 @@ function subClicked() {
     if (lastPressed === 'num') {
         if (lastOperator === 'add') {
             displayValue += storedValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'sub') {
             displayValue = storedValue - displayValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'mul') {
             displayValue = storedValue * displayValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'div') {
             if (displayValue !== 0) {
                 displayValue = storedValue / displayValue;
-                display.innerHTML = displayValue
+                display.innerHTML = roundNumber(displayValue)
             }
             else {
                 display.innerHTML = 'Cannot divide by zero';
@@ -178,20 +204,20 @@ function mulClicked() {
     if (lastPressed === 'num') {
         if (lastOperator === 'add') {
             displayValue += storedValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'sub') {
             displayValue = storedValue - displayValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'mul') {
             displayValue = storedValue * displayValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'div') {
             if (displayValue !== 0) {
                 displayValue = storedValue / displayValue;
-                display.innerHTML = displayValue
+                display.innerHTML = roundNumber(displayValue)
             }
             else {
                 display.innerHTML = 'Cannot divide by zero';
@@ -221,20 +247,20 @@ function divClicked() {
     if (lastPressed === 'num') {
         if (lastOperator === 'add') {
             displayValue += storedValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'sub') {
             displayValue = storedValue - displayValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'mul') {
             displayValue = storedValue * displayValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'div') {
             if (displayValue !== 0) {
                 displayValue = storedValue / displayValue;
-                display.innerHTML = displayValue
+                display.innerHTML = roundNumber(displayValue)
             }
             else {
                 display.innerHTML = 'Cannot divide by zero';
@@ -265,20 +291,20 @@ function calculate() {
     if (lastPressed === 'num') {
         if (lastOperator === 'add') {
             displayValue += storedValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'sub') {
             displayValue = storedValue - displayValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'mul') {
             displayValue = storedValue * displayValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'div') {
             if (displayValue !== 0) {
-                displayValue = storedValue.toFixed(4) / displayValue.toFixed(4);
-                display.innerHTML = displayValue
+                displayValue = storedValue/ displayValue;
+                display.innerHTML = roundNumber(displayValue);
             }
             else {
                 display.innerHTML = 'Cannot divide by zero';
@@ -298,23 +324,23 @@ function calculate() {
     }
     else if (lastPressed === 'add') {
         displayValue += storedValue;
-        display.innerHTML = displayValue
+        display.innerHTML = roundNumber(displayValue)
         lastOperator = 'add';
     }
     else if (lastPressed === 'sub') {
         displayValue = storedValue - displayValue;
-        display.innerHTML = displayValue
+        display.innerHTML = roundNumber(displayValue)
         lastOperator = 'sub';
     }
     else if (lastPressed === 'mul') {
         displayValue = storedValue * displayValue;
-        display.innerHTML = displayValue
+        display.innerHTML = roundNumber(displayValue)
         lastOperator = 'mul';
     }
     else if (lastPressed === 'div') {
         if (displayValue !== 0) {
             displayValue = storedValue / displayValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
             lastOperator = 'div';
         }
         else {
@@ -335,24 +361,24 @@ function calculate() {
     else if (lastPressed === 'calc') {
         if (lastOperator === 'add') {
             newDisplayValue = inputValue.join('');
-            newDisplayValue = parseInt(newDisplayValue);
+            newDisplayValue = parseFloat(newDisplayValue);
             storedValue = displayValue;
             displayValue += newDisplayValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'sub') {
             newDisplayValue = inputValue.join('');
-            newDisplayValue = parseInt(newDisplayValue);
+            newDisplayValue = parseFloat(newDisplayValue);
             storedValue = displayValue;
             displayValue -= newDisplayValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'mul') {
             newDisplayValue = inputValue.join('');
-            newDisplayValue = parseInt(newDisplayValue);
+            newDisplayValue = parseFloat(newDisplayValue);
             storedValue = displayValue;
             displayValue *= newDisplayValue;
-            display.innerHTML = displayValue
+            display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'div') {
             newDisplayValue = inputValue.join('');
@@ -360,7 +386,7 @@ function calculate() {
             storedValue = displayValue;
             if (displayValue !== 0) {
                 displayValue = storedValue / newDisplayValue;
-                display.innerHTML = displayValue
+                display.innerHTML = roundNumber(displayValue)
             }
             else {
                 display.innerHTML = 'Cannot divide by zero';
@@ -383,6 +409,10 @@ function calculate() {
     }
     lastPressed = 'calc';
     updateDebug();
+}
+
+function roundNumber(num) {
+    return Math.round((num + Number.EPSILON) * 1000) / 1000;
 }
 
 

@@ -4,7 +4,6 @@ let storedValue = 0;
 let resultValue = 0;
 let lastPressed = null;
 let lastOperator = null;
-let clearMe = false;
 
 const display = document.getElementById('display');
 window.onload = clearDisplay;
@@ -18,18 +17,16 @@ function clearDisplay() {
     resultValue = 0;
     lastPressed = null;
     lastOperator = null;
-    clearMe = false;
     display.innerHTML = displayValue;
-
+    document.getElementById('+').disabled = false;
+    document.getElementById('-').disabled = false;
+    document.getElementById('*').disabled = false;
+    document.getElementById('/').disabled = false;
     updateDebug();
 }
 
 function clickHandler(number) {
-    
-    if (lastPressed === 'num') {
-        
-    }
-    else if (lastPressed === 'add') {
+    if (lastPressed === 'add' || lastPressed === 'sub' || lastPressed === 'mul' || lastPressed === 'div') {
         inputValue = [];
         displayValue = 0;
     }
@@ -37,7 +34,6 @@ function clickHandler(number) {
         inputValue = [];
         displayValue = 0;
         storedValue = 0;
-
     }
     else {
         displayValue[0] = number;
@@ -47,23 +43,54 @@ function clickHandler(number) {
     inputValue.push(number);
     displayValue = inputValue.join('');
     displayValue = parseInt(displayValue);
-    display.innerHTML = displayValue;
+    display.innerHTML = displayValue
+
+    document.getElementById('+').disabled = false;
+    document.getElementById('-').disabled = false;
+    document.getElementById('*').disabled = false;
+    document.getElementById('/').disabled = false;
 
     updateDebug();
 }
 
 function addClicked() {
     if (lastPressed === 'num') {
+        if (lastOperator === 'add') {
+            displayValue += storedValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'sub') {
+            displayValue = storedValue - displayValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'mul') {
+            displayValue = storedValue * displayValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'div') {
+            if (displayValue !== 0) {
+                displayValue = storedValue / displayValue;
+                display.innerHTML = displayValue
+            }
+            else {
+                display.innerHTML = 'Cannot divide by zero';
+                inputValue = [];
+                displayValue = 0;           
+                storedValue = 0;
+                resultValue = 0;
+                lastPressed = null;
+                lastOperator = null;
+                document.getElementById('+').disabled = true;
+                document.getElementById('-').disabled = true;
+                document.getElementById('*').disabled = true;
+                document.getElementById('/').disabled = true;
+                updateDebug();
+            }
+        }
         storedValue = displayValue;
-    }
-    else if (lastPressed === 'add') {
-
     }
     else if (lastPressed === 'calc') {
-        
         storedValue = displayValue;
-        
-
     }
     lastPressed = 'add';
     lastOperator = 'add';
@@ -71,27 +98,256 @@ function addClicked() {
     updateDebug();
 }
 
+function subClicked() {
+    if (lastPressed === 'num') {
+        if (lastOperator === 'add') {
+            displayValue += storedValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'sub') {
+            displayValue = storedValue - displayValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'mul') {
+            displayValue = storedValue * displayValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'div') {
+            if (displayValue !== 0) {
+                displayValue = storedValue / displayValue;
+                display.innerHTML = displayValue
+            }
+            else {
+                display.innerHTML = 'Cannot divide by zero';
+                inputValue = [];
+                displayValue = 0;           
+                storedValue = 0;
+                resultValue = 0;
+                lastPressed = null;
+                lastOperator = null;
+                document.getElementById('+').disabled = true;
+                document.getElementById('-').disabled = true;
+                document.getElementById('*').disabled = true;
+                document.getElementById('/').disabled = true;
+                updateDebug();
+            }
+        }
+        storedValue = displayValue;
+    }
+    else if (lastPressed === 'calc') {
+        storedValue = displayValue;
+    }
+    lastPressed = 'sub';
+    lastOperator = 'sub';
+
+    updateDebug();
+}
+
+function mulClicked() {
+    if (lastPressed === 'num') {
+        if (lastOperator === 'add') {
+            displayValue += storedValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'sub') {
+            displayValue = storedValue - displayValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'mul') {
+            displayValue = storedValue * displayValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'div') {
+            if (displayValue !== 0) {
+                displayValue = storedValue / displayValue;
+                display.innerHTML = displayValue
+            }
+            else {
+                display.innerHTML = 'Cannot divide by zero';
+                inputValue = [];
+                displayValue = 0;           
+                storedValue = 0;
+                resultValue = 0;
+                lastPressed = null;
+                lastOperator = null;
+                document.getElementById('+').disabled = true;
+                document.getElementById('-').disabled = true;
+                document.getElementById('*').disabled = true;
+                document.getElementById('/').disabled = true;
+                updateDebug();
+            }
+        }
+        storedValue = displayValue;
+    }
+    else if (lastPressed === 'calc') {
+        storedValue = displayValue;
+    }
+    lastPressed = 'mul';
+    lastOperator = 'mul';
+}
+
+function divClicked() {
+    if (lastPressed === 'num') {
+        if (lastOperator === 'add') {
+            displayValue += storedValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'sub') {
+            displayValue = storedValue - displayValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'mul') {
+            displayValue = storedValue * displayValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'div') {
+            if (displayValue !== 0) {
+                displayValue = storedValue / displayValue;
+                display.innerHTML = displayValue
+            }
+            else {
+                display.innerHTML = 'Cannot divide by zero';
+                inputValue = [];
+                displayValue = 0;           
+                storedValue = 0;
+                resultValue = 0;
+                lastPressed = null;
+                lastOperator = null;
+                document.getElementById('+').disabled = true;
+                document.getElementById('-').disabled = true;
+                document.getElementById('*').disabled = true;
+                document.getElementById('/').disabled = true;
+                updateDebug();
+            }
+        }
+        storedValue = displayValue;
+    }
+    else if (lastPressed === 'calc') {
+        storedValue = displayValue;
+    }
+    lastPressed = 'div';
+    lastOperator = 'div';
+}
+
 function calculate() {
     if (lastPressed === 'num') {
         if (lastOperator === 'add') {
             displayValue += storedValue;
-            display.innerHTML = displayValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'sub') {
+            displayValue = storedValue - displayValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'mul') {
+            displayValue = storedValue * displayValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'div') {
+            if (displayValue !== 0) {
+                displayValue = storedValue.toFixed(4) / displayValue.toFixed(4);
+                display.innerHTML = displayValue
+            }
+            else {
+                display.innerHTML = 'Cannot divide by zero';
+                inputValue = [];
+                displayValue = 0;           
+                storedValue = 0;
+                resultValue = 0;
+                lastPressed = null;
+                lastOperator = null;
+                document.getElementById('+').disabled = true;
+                document.getElementById('-').disabled = true;
+                document.getElementById('*').disabled = true;
+                document.getElementById('/').disabled = true;
+                updateDebug();
+            }
         }
     }
     else if (lastPressed === 'add') {
         displayValue += storedValue;
-        display.innerHTML = displayValue;
+        display.innerHTML = displayValue
         lastOperator = 'add';
+    }
+    else if (lastPressed === 'sub') {
+        displayValue = storedValue - displayValue;
+        display.innerHTML = displayValue
+        lastOperator = 'sub';
+    }
+    else if (lastPressed === 'mul') {
+        displayValue = storedValue * displayValue;
+        display.innerHTML = displayValue
+        lastOperator = 'mul';
+    }
+    else if (lastPressed === 'div') {
+        if (displayValue !== 0) {
+            displayValue = storedValue / displayValue;
+            display.innerHTML = displayValue
+            lastOperator = 'div';
+        }
+        else {
+            display.innerHTML = 'Cannot divide by zero';
+            inputValue = [];
+            displayValue = 0;           
+            storedValue = 0;
+            resultValue = 0;
+            lastPressed = null;
+            lastOperator = null;
+            document.getElementById('+').disabled = true;
+            document.getElementById('-').disabled = true;
+            document.getElementById('*').disabled = true;
+            document.getElementById('/').disabled = true;
+            updateDebug();
+        }
     }
     else if (lastPressed === 'calc') {
         if (lastOperator === 'add') {
-            newdisplayValue = inputValue.join('');
-            newdisplayValue = parseInt(newdisplayValue);
+            newDisplayValue = inputValue.join('');
+            newDisplayValue = parseInt(newDisplayValue);
             storedValue = displayValue;
-            displayValue += newdisplayValue;
-
-            display.innerHTML = displayValue;
+            displayValue += newDisplayValue;
+            display.innerHTML = displayValue
         }
+        else if (lastOperator === 'sub') {
+            newDisplayValue = inputValue.join('');
+            newDisplayValue = parseInt(newDisplayValue);
+            storedValue = displayValue;
+            displayValue -= newDisplayValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'mul') {
+            newDisplayValue = inputValue.join('');
+            newDisplayValue = parseInt(newDisplayValue);
+            storedValue = displayValue;
+            displayValue *= newDisplayValue;
+            display.innerHTML = displayValue
+        }
+        else if (lastOperator === 'div') {
+            newDisplayValue = inputValue.join('');
+            newDisplayValue = parseFloat(newDisplayValue);
+            storedValue = displayValue;
+            if (displayValue !== 0) {
+                displayValue = storedValue / newDisplayValue;
+                display.innerHTML = displayValue
+            }
+            else {
+                display.innerHTML = 'Cannot divide by zero';
+                inputValue = [];
+                displayValue = 0;           
+                storedValue = 0;
+                resultValue = 0;
+                lastPressed = null;
+                lastOperator = null;
+                document.getElementById('+').disabled = true;
+                document.getElementById('-').disabled = true;
+                document.getElementById('*').disabled = true;
+                document.getElementById('/').disabled = true;
+                updateDebug();
+            }
+        }
+    }
+    if (lastPressed === null || lastOperator === null) {
+        clearDisplay();
     }
     lastPressed = 'calc';
     updateDebug();

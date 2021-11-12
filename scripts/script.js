@@ -8,6 +8,25 @@ let lastOperator = null;
 const display = document.getElementById('display');
 window.onload = clearDisplay;
 
+window.addEventListener("keydown", function (event) {
+    if (!isNaN(event.key)) {
+        let pressedNumber = event.key;
+        pressedNumber = parseInt(pressedNumber);
+        clickHandler(pressedNumber);
+    }
+    else {
+        switch(event.key) {
+            case '+': addClicked(); break;
+            case '-': subClicked(); break;
+            case '*': mulClicked(); break;
+            case '/': divClicked(); break;
+            case 'Enter': calculate(); break;
+            case 'Escape': clearDisplay(); break;
+            default: break;
+        }
+    }
+});
+
 const debugValues = document.getElementById('debug');
 
 function clearDisplay() {
@@ -50,6 +69,18 @@ function clickHandler(number) {
     document.getElementById('*').disabled = false;
     document.getElementById('/').disabled = false;
 
+    updateDebug();
+}
+
+function backspace() {
+    inputValue.pop();
+    displayValue = inputValue.join('');
+    displayValue = parseInt(displayValue);
+    if (isNaN(displayValue)) {
+        displayValue = 0;
+        inputValue = [];
+    }
+    display.innerHTML = displayValue;
     updateDebug();
 }
 
@@ -229,6 +260,7 @@ function divClicked() {
     lastOperator = 'div';
 }
 
+
 function calculate() {
     if (lastPressed === 'num') {
         if (lastOperator === 'add') {
@@ -352,6 +384,9 @@ function calculate() {
     lastPressed = 'calc';
     updateDebug();
 }
+
+
+
 
 function updateDebug() {
     debugValues.innerHTML = `

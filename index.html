@@ -6,7 +6,9 @@
         <link rel='stylesheet' href='./styles/style.css'>
     </head>
     <body>
+        
         <main id='calculator'>
+            
             <div id='display'>
 
             </div>
@@ -25,10 +27,12 @@
             </div>
             <div id='operations'>
                 <button onclick='clearDisplay()'>C</button>
+                <button id='back' onclick='backspace()'>&lt;</button>
                 <button id='+' onclick='addClicked()'>+</button>
                 <button id='-' onclick='subClicked()'>-</button>
                 <button id='*' onclick='mulClicked()'>*</button>
                 <button id='/' onclick='divClicked()'>/</button>
+                <button id='.' onclick='decimalClicked()'>.</button>
                 <button onclick='calculate()'>=</button>
             </div>
             <div id='debug'>

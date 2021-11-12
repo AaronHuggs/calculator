@@ -1,0 +1,7 @@
+#calculator {
+    border: 2px solid blue;
+}
+
+#calculator:active {
+    border: 2px solid red;
+}

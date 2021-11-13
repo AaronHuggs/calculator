@@ -46,6 +46,8 @@ function clearDisplay() {
     updateDisplay();
     stored.innerHTML = '';
     enableOperators();
+    resizeDisplay();
+    resizeStoredDisplay();
 }
 
 // Handles number and decimal click/keypress events
@@ -67,7 +69,7 @@ function clickHandler(number) {
                 inputValue.push(number);
                 displayValue = inputValue.join('');
             }
-            display.innerHTML = displayValue;
+            display.innerHTML = numberWithCommas(displayValue);
             lastPressed === '.';
             return;
         }
@@ -87,7 +89,7 @@ function clickHandler(number) {
                 inputValue.push(number);
                 displayValue = inputValue.join('');
             }
-            display.innerHTML = displayValue;
+            display.innerHTML = numberWithCommas(displayValue);
             lastPressed === '.';
             return;
         }
@@ -102,7 +104,7 @@ function clickHandler(number) {
             displayValue = inputValue.join('');
         }
         //Don't round, as it causes issues here
-        display.innerHTML = displayValue;
+        display.innerHTML = numberWithCommas(displayValue);
         lastPressed = '.';
         return;
     }
@@ -113,8 +115,12 @@ function clickHandler(number) {
             inputValue.push(0);
             displayValue = inputValue.join('');
             //Don't round, as it causes issues here
-            display.innerHTML = displayValue;
+            display.innerHTML = numberWithCommas(displayValue);
         }
+        return;
+    }
+    //Limit numbers to trillions place
+    else if (inputValue.length > 12) {
         return;
     }
     //Store input in displayValue
@@ -254,7 +260,7 @@ function calculate() {
             divideWithStoredDisplay();
         }
         else if (lastOperator === null) {
-            display.innerHTML = displayValue;
+            display.innerHTML = numberWithCommas(displayValue);
         }
     }
     //If last pressed an operator, do the math
@@ -301,42 +307,94 @@ function calculate() {
 
     //When calc is pressed, add an = to stored display if one doesn't exist
     if (!stored.innerHTML.includes('=') && document.getElementById('/').disabled === false) {
-        stored.innerHTML += inputValue.join('');
+        stored.innerHTML += numberWithCommas(inputValue.join(''));
         stored.innerHTML += ' = ';
     }
     lastPressed = 'calc';
 }
 
-function updateDisplay() {
+function updateDisplay() {  
     display.innerHTML = roundNumber(displayValue);
+    resizeDisplay();
+}
+
+function resizeDisplay() {
+    display.style.fontSize = '48px';
+    //Shrink the font size if the number gets too big
+    if (displayValue >= 1000000000) {
+        display.style.fontSize = '44px';
+    }
+    if (displayValue >= 10000000000) {
+        display.style.fontSize = '41px';
+    }
+    if (displayValue >= 100000000000) {
+        display.style.fontSize = '38px';
+    }
+    if (displayValue >= 1000000000000) {
+        display.style.fontSize = '34px';
+    }
+    if (displayValue > 10000000000000) {
+        display.style.fontSize = '24px';
+    }
+}
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function roundNumber(num) {
-    return Math.round((num + Number.EPSILON) * 10000) / 10000;
+    let roundedNum = Math.round((num + Number.EPSILON) * 10000) / 10000;
+    return numberWithCommas(roundedNum);
 }
 
 function updateStoredWithDisplay() {
     stored.innerHTML = roundNumber(displayValue);
+    resizeStoredDisplay();
+}
+
+function resizeStoredDisplay() {
+    stored.style.fontSize = '16px';
+    console.log(stored.innerHTML.length);
+    //Shrink font size if the numbers are too big
+    if (stored.innerHTML.length > 32) {
+        stored.style.fontSize = '14px';
+    }
+    if (stored.innerHTML.length > 36) {
+        stored.style.fontSize = '12px';
+    }
+    if (stored.innerHTML.length > 40) {
+        stored.style.fontSize = '10px';
+    }
 }
 
 function updateStoredOperator() {
     switch(lastPressed) {
-        case 'add': stored.innerHTML = storedValue + ' + ';break;
-        case 'sub': stored.innerHTML = storedValue + ' - ';break;
-        case 'mul': stored.innerHTML = storedValue + ' &times ';break;
-        case 'div': stored.innerHTML = storedValue + ' &divide ';break;
+        case 'add': stored.innerHTML = roundNumber(storedValue) + ' + ';
+        resizeStoredDisplay()
+        break;
+        case 'sub': stored.innerHTML = roundNumber(storedValue) + ' - ';
+        resizeStoredDisplay()
+        break;
+        case 'mul': stored.innerHTML = roundNumber(storedValue) + ' &times ';
+        resizeStoredDisplay()
+        break;
+        case 'div': stored.innerHTML = roundNumber(storedValue) + ' &divide ';
+        resizeStoredDisplay()
+        break;
         default: break;
     }
 }
 
 function updateStoredWithOperator(sym) {
-    stored.innerHTML = roundNumber(storedValue) + ` ${sym} ` + inputValue.join('') + ' = ';
+    stored.innerHTML = roundNumber(storedValue) + ` ${sym} ` + numberWithCommas(inputValue.join('')) + ' = ';
+    resizeStoredDisplay()
 }
 
 function checkSymbol(sym) {
     if (!stored.innerHTML.includes(sym)) {
         stored.innerHTML = roundNumber(displayValue);
         stored.innerHTML += ` ${sym} `;
+        resizeStoredDisplay()
     }
 }
 
@@ -345,21 +403,25 @@ function addSymbol(op) {
         case 'add': {
             stored.innerHTML += ' + ';
             storedValue = displayValue;
+            resizeStoredDisplay();
         }; break;
 
         case 'sub': {
             stored.innerHTML += ' - ';
             storedValue = displayValue;
+            resizeStoredDisplay();
         }; break;
 
         case 'mul': {
             stored.innerHTML += ' &times ';
             storedValue = displayValue;
+            resizeStoredDisplay();
         }; break;
 
         case 'div': {
             stored.innerHTML += ' &divide ';
             storedValue = displayValue;
+            resizeStoredDisplay();
         }; break;
 
         default: break;
@@ -389,7 +451,7 @@ function doMath() {
         subtract();
         updateDisplay();
     }
-    else if (lastOperator === 'mul') {
+    else if (lastOperator === 'mul' && storedValue !== 0) {
         multiply();
         updateDisplay();
     }
@@ -407,7 +469,8 @@ function repeatMath(op) {
             displayValue += newDisplayValue;
             display.innerHTML = roundNumber(displayValue)
 
-            stored.innerHTML = roundNumber(storedValue) + ' + ' + inputValue.join('') + ' = ';
+            stored.innerHTML = roundNumber(storedValue) + ' + ' + numberWithCommas(inputValue.join('')) + ' = ';
+            resizeStoredDisplay();
         }; break;
 
         case 'sub': {
@@ -417,7 +480,8 @@ function repeatMath(op) {
             displayValue -= newDisplayValue;
             display.innerHTML = roundNumber(displayValue)
 
-            stored.innerHTML = roundNumber(storedValue) + ' - ' + inputValue.join('') + ' = ';
+            stored.innerHTML = roundNumber(storedValue) + ' - ' + numberWithCommas(inputValue.join('')) + ' = ';
+            resizeStoredDisplay();
         }; break;
 
         case 'mul': {
@@ -427,7 +491,8 @@ function repeatMath(op) {
             displayValue *= newDisplayValue;
             display.innerHTML = roundNumber(displayValue)
 
-            stored.innerHTML = roundNumber(storedValue) + ' &times ' + inputValue.join('') + ' = ';
+            stored.innerHTML = roundNumber(storedValue) + ' &times ' + numberWithCommas(inputValue.join('')) + ' = ';
+            resizeStoredDisplay();
         }; break;
 
         case 'div': {
@@ -438,9 +503,11 @@ function repeatMath(op) {
                 displayValue = storedValue / newDisplayValue;
                 display.innerHTML = roundNumber(displayValue)
 
-                stored.innerHTML = roundNumber(storedValue) + ' &divide ' + inputValue.join('') + ' = ';
+                stored.innerHTML = roundNumber(storedValue) + ' &divide ' + numberWithCommas(inputValue.join('')) + ' = ';
+                resizeStoredDisplay();
             }
             else {
+                display.style.fontSize = '30px';
                 display.innerHTML = 'Cannot divide by zero';
                 inputValue = [];
                 displayValue = 0;           
@@ -476,6 +543,7 @@ function divide() {
         updateDisplay();
     }
     else {
+        display.style.fontSize = '30px';
         display.innerHTML = 'Cannot divide by zero';
         inputValue = [];
         displayValue = 0;           
@@ -494,6 +562,7 @@ function divideWithStoredDisplay() {
         updateDisplay();
     }
     else {
+        display.style.fontSize = '30px';
         display.innerHTML = 'Cannot divide by zero';
         inputValue = [];
         displayValue = 0;           

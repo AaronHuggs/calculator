@@ -3,6 +3,7 @@ const display = document.getElementById('display');
 const stored = document.getElementById('stored');
 const precisionValue = document.getElementById('precisionValue');
 
+
 let inputValue = [];
 let displayValue = 0;
 let storedDisplay = '';
@@ -51,6 +52,7 @@ function clearDisplay() {
     enableOperators();
     resizeDisplay();
     resizeStoredDisplay();
+    updatePrecisionColor('white');
 }
 
 // Handles number and decimal click/keypress events
@@ -127,6 +129,9 @@ function clickHandler(number) {
     else if (inputValue.length > 12) {
         return;
     }
+    else if (inputValue.includes('.')) {
+        if (checkPrecisionOverflow()) return;
+    }
     //Store input in displayValue
     else {
         displayValue[0] = number;
@@ -136,8 +141,9 @@ function clickHandler(number) {
     inputValue.push(number);
     displayValue = inputValue.join('');
     displayValue = parseFloat(displayValue);
+    
     updateDisplay();
-
+    updatePrecisionColor('white');
     enableOperators();
 }
 
@@ -161,7 +167,7 @@ function backspace() {
     else {
         stored.innerHTML = '';
     }
-    
+    updatePrecisionColor('white');
     updateDisplay();
 }
 
@@ -182,7 +188,7 @@ function addClicked() {
     }
     lastPressed = 'add';
     lastOperator = 'add';
-
+    updatePrecisionColor('white');
 }
 
 function subClicked() {
@@ -201,7 +207,7 @@ function subClicked() {
     }
     lastPressed = 'sub';
     lastOperator = 'sub';
-
+    updatePrecisionColor('white');
 }
 
 function mulClicked() {
@@ -220,6 +226,7 @@ function mulClicked() {
     }
     lastPressed = 'mul';
     lastOperator = 'mul';
+    updatePrecisionColor('white');
 }
 
 function divClicked() {
@@ -238,6 +245,7 @@ function divClicked() {
     }
     lastPressed = 'div';
     lastOperator = 'div';
+    updatePrecisionColor('white');
 }
 
 
@@ -315,6 +323,7 @@ function calculate() {
         stored.innerHTML += ' = ';
     }
     lastPressed = 'calc';
+    updatePrecisionColor('white');
 }
 
 function updateDisplay() {  
@@ -361,15 +370,15 @@ function roundNumber(num) {
 function incPrecision() {
     if (precision < 9)
         precision++;
-    
     updatePrecisionDisplay();
+    checkPrecisionOverflow();
 }
 
 function decPrecision() {
     if (precision > 0)
         precision--;
-
     updatePrecisionDisplay();
+    checkPrecisionOverflow();
 }
 
 function roundToPrecision() {
@@ -469,10 +478,10 @@ function addSymbol(op) {
 }
 
 function enableOperators() {
-    document.getElementById('+').disabled = false;
-    document.getElementById('-').disabled = false;
-    document.getElementById('*').disabled = false;
-    document.getElementById('/').disabled = false;
+    document.getElementById('add').disabled = false;
+    document.getElementById('sub').disabled = false;
+    document.getElementById('mul').disabled = false;
+    document.getElementById('div').disabled = false;
 }
 
 function disableOperators() {
@@ -629,4 +638,21 @@ function divideWithStoredDisplay() {
 function updatePrecisionDisplay() {
     precisionValue.innerHTML = precision;
     precisionValue.innerHTML += ' digits';
+}
+
+function updatePrecisionColor(color) {
+    precisionValue.style.color = color;
+}
+
+function checkPrecisionOverflow() {
+    let decNumIndex = inputValue.indexOf('.');
+    let decimalNumbers = inputValue.slice(decNumIndex+1);
+    if (decimalNumbers.length >= precision) {
+        updatePrecisionColor('red');
+        return true;
+    }
+    else {
+        updatePrecisionColor('white');
+        return false;
+    }
 }

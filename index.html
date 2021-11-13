@@ -4,12 +4,30 @@
         <title>Calculator</title>
         <meta charset="UTF-8">
         <link rel='stylesheet' href='./styles/style.css'>
+
+        <meta name="viewport" content="width=device-width, user-scalable=no" />
     </head>
     <body>
+        
         <main id='calculator'>
-            <div id='display'>
+            <div id='displayValues'>
+                <div id='stored'>
 
+                </div>
+                <div id='display'>
+
+                </div>
             </div>
+            
+            <div id='precision'>
+                <div>
+                    <button onclick='incPrecision()' tabindex="-1">+Prec</button>
+                    <button onclick='decPrecision()' tabindex="-1">-Prec</button>
+                </div>
+                <label id='precisionValue'></label>
+                <button id='back' onclick='backspace()' tabindex="-1">&lt;</button>
+            </div>
+
             <div id='numpad'>
                 <button onclick="clickHandler(1)">1</button>
                 <button onclick="clickHandler(2)">2</button>
@@ -20,17 +38,18 @@
                 <button onclick="clickHandler(7)">7</button>
                 <button onclick="clickHandler(8)">8</button>
                 <button onclick="clickHandler(9)">9</button>
+                <button onclick='clearDisplay()' tabindex="-1">C</button>
                 <button onclick="clickHandler(0)">0</button>
-                
+                <button id='decimal' onclick="clickHandler('.')">.</button>
             </div>
             <div id='operations'>
-                <button onclick='clearDisplay()'>C</button>
-                <button onclick='add()'>+</button>
-                <button onclick='subtract()'>-</button>
-                <button id='*'>*</button>
-                <button id='/'>/</button>
-                <button onclick='operate()'>=</button>
+                <button id='div' onclick='divClicked()'>&divide;</button>
+                <button id='mul' onclick='mulClicked()'>&times;</button>
+                <button id='sub' onclick='subClicked()'>-</button>
+                <button id='add' onclick='addClicked()'>+</button>
+                <button onclick='calculate()'>=</button>
             </div>
+            
         </main>
         <script src='./scripts/script.js'></script>
     </body>

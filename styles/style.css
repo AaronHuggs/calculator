@@ -1,0 +1,124 @@
+html {
+  -webkit-tap-highlight-color:transparent;
+}
+
+body {
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+#calculator {
+    height: 415px;
+    width: 330px;
+    padding-right: 4px;
+    background-color: rgb(48, 51, 51);
+    border: 4px solid black;
+    display: grid;
+    grid-template: 150px 50px auto / 240px 80px;
+    gap: 2px;
+    justify-content: center;
+}
+
+
+#displayValues {
+    grid-column: 1 / span 2;
+    grid-row: 1;
+}
+
+#display {
+    color: white;
+    text-align: right;
+    font-size: 48px;
+    padding: 0px 20px 30px 0px;
+    height: 60px;
+}
+
+#stored {
+    color: gray;
+    text-align: right;
+    font-size: 16px;
+    padding: 40px 25px 10px 0px;
+    height: 20px;
+    
+}
+
+#precisionValue {
+    color: white;
+}
+
+#calculator > div > button:hover {
+    background-color:rgb(85, 85, 85);
+}
+
+#calculator > div > button:active {
+    background-color:rgb(133, 133, 133); 
+    border: none;  
+}
+
+#calculator > div > button {
+    color: white;
+    font-size: 18px;
+    border:none;
+}
+
+#numpad {
+    display: grid;
+    grid-template: repeat(4, 50px) / repeat(3, 80px);
+    gap: 2px;
+
+    grid-column: 1;
+    grid-row: 3;
+}
+
+#numpad > button {
+    background-color: black;
+}
+
+#operations {
+    display: grid;
+    grid-template: repeat(5, 50px) / 80px;
+    gap: 2px;
+    padding-left: 4px;
+    grid-column: 2;
+    grid-row: 2 / span 2;
+}
+
+#operations > button {
+    background-color: dimgray;
+}
+
+#precision {
+    display: grid;
+    grid-template: 50px/ repeat(3, 80px);
+    gap: 2px;
+    
+}
+
+#precision > button {
+    background-color: dimgray;
+    color: white;
+    font-size: 18px;
+    border:none; 
+}
+
+#precision > div {
+    height: 50px;
+    line-height: 25px;
+}
+
+#precision > div > button {
+    background-color: dimgray;
+    color: white;
+    font-size: 14px; 
+    width: 80px;
+    height: 24px;
+
+}
+
+#precisionValue {
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+    background-color:rgb(84, 87, 87);
+    font-size: 18px;
+    
+}

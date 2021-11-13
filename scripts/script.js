@@ -1,6 +1,7 @@
 //Variables
 const display = document.getElementById('display');
 const stored = document.getElementById('stored');
+const precisionValue = document.getElementById('precisionValue');
 
 let inputValue = [];
 let displayValue = 0;
@@ -8,6 +9,8 @@ let storedDisplay = '';
 let storedValue = 0;
 let lastPressed = null;
 let lastOperator = null;
+let precision = 3;
+updatePrecisionDisplay();
 
 //Clear display on load
 window.onload = clearDisplay;
@@ -78,6 +81,7 @@ function clickHandler(number) {
     else if (lastPressed === 'calc') {
         //Start a new calculation
         inputValue = [];
+        newDisplayValue = displayValue; //Save for sub edge case
         displayValue = 0;
         storedValue = 0;
         stored.innerHTML = '';
@@ -90,7 +94,7 @@ function clickHandler(number) {
                 displayValue = inputValue.join('');
             }
             display.innerHTML = numberWithCommas(displayValue);
-            lastPressed === '.';
+            lastPressed = '.';
             return;
         }
     }
@@ -110,8 +114,8 @@ function clickHandler(number) {
     }
     //Check if user is inputting multiple leading zeroes.
     else if (number === 0 && lastPressed === '.') {
-        //Only allow values to thousandths place.
-        if (inputValue.length < 4) {
+        //Only allow an input of nine 0's after decimal
+        if (inputValue.length < 11) {
             inputValue.push(0);
             displayValue = inputValue.join('');
             //Don't round, as it causes issues here
@@ -319,32 +323,62 @@ function updateDisplay() {
 }
 
 function resizeDisplay() {
+    //Default display size
     display.style.fontSize = '48px';
     //Shrink the font size if the number gets too big
-    if (displayValue >= 1000000000) {
+    if (display.innerHTML.length >= 13) {
         display.style.fontSize = '44px';
     }
-    if (displayValue >= 10000000000) {
+    if (display.innerHTML.length >= 14) {
         display.style.fontSize = '41px';
     }
-    if (displayValue >= 100000000000) {
+    if (display.innerHTML.length >= 15) {
         display.style.fontSize = '38px';
     }
-    if (displayValue >= 1000000000000) {
+    if (display.innerHTML.length >= 16) {
         display.style.fontSize = '34px';
     }
-    if (displayValue > 10000000000000) {
-        display.style.fontSize = '24px';
+    if (display.innerHTML.length >= 18) {
+        display.style.fontSize = '28px';
+    }
+    if (display.innerHTML.length >= 20) {
+        display.style.fontSize = '25px';
     }
 }
 
 function numberWithCommas(x) {
+    //Write numbers using commas to seperate thousands, millions, etc
     return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function roundNumber(num) {
-    let roundedNum = Math.round((num + Number.EPSILON) * 10000) / 10000;
+    //Round out the decimal to a maximum
+    let maxPrecision = roundToPrecision();
+    let roundedNum = Math.round((num + Number.EPSILON) * (maxPrecision)) / (maxPrecision);
     return numberWithCommas(roundedNum);
+}
+
+function incPrecision() {
+    if (precision < 9)
+        precision++;
+    
+    updatePrecisionDisplay();
+}
+
+function decPrecision() {
+    if (precision > 0)
+        precision--;
+
+    updatePrecisionDisplay();
+}
+
+function roundToPrecision() {
+    let usePrecision = '1';
+    for (let i = 0; i < precision; i++) {
+        usePrecision += '0';
+    }
+    usePrecision = parseInt(usePrecision);
+    return usePrecision;
 }
 
 function updateStoredWithDisplay() {
@@ -354,7 +388,7 @@ function updateStoredWithDisplay() {
 
 function resizeStoredDisplay() {
     stored.style.fontSize = '16px';
-    console.log(stored.innerHTML.length);
+    
     //Shrink font size if the numbers are too big
     if (stored.innerHTML.length > 32) {
         stored.style.fontSize = '14px';
@@ -386,7 +420,13 @@ function updateStoredOperator() {
 }
 
 function updateStoredWithOperator(sym) {
-    stored.innerHTML = roundNumber(storedValue) + ` ${sym} ` + numberWithCommas(inputValue.join('')) + ' = ';
+    //account for edge case
+    if (lastPressed === 'num' && lastOperator === 'sub' && storedValue === 0) {
+        stored.innerHTML = numberWithCommas(inputValue.join(''))  + ` ${sym} ` + roundNumber(newDisplayValue) + ' = ';
+    }
+    else {
+        stored.innerHTML = roundNumber(storedValue) + ` ${sym} ` + numberWithCommas(inputValue.join('')) + ' = ';
+    }
     resizeStoredDisplay()
 }
 
@@ -461,6 +501,9 @@ function doMath() {
 }
 
 function repeatMath(op) {
+    if (inputValue.length === 0) {
+        inputValue.push(0);
+    }
     switch(op) {
         case 'add': {
             newDisplayValue = inputValue.join('');
@@ -482,6 +525,7 @@ function repeatMath(op) {
 
             stored.innerHTML = roundNumber(storedValue) + ' - ' + numberWithCommas(inputValue.join('')) + ' = ';
             resizeStoredDisplay();
+            
         }; break;
 
         case 'mul': {
@@ -529,7 +573,13 @@ function add() {
 }
 
 function subtract() {
-    displayValue = storedValue - displayValue;
+    if (lastPressed === 'num' && lastOperator === 'sub' && storedValue === 0) {
+        displayValue -= newDisplayValue;
+    }
+    else {
+        displayValue = storedValue - displayValue;
+    }
+    
 }
 
 function multiply() {
@@ -538,7 +588,10 @@ function multiply() {
 
 function divide() {
     //Ensure there's no 'divide by zero' error.
-    if (displayValue !== 0) {
+    if (storedValue === 0) {
+        updateDisplay();
+    }
+    else if (displayValue !== 0) {
         displayValue = storedValue / displayValue;
         updateDisplay();
     }
@@ -573,3 +626,7 @@ function divideWithStoredDisplay() {
     }
 }
 
+function updatePrecisionDisplay() {
+    precisionValue.innerHTML = precision;
+    precisionValue.innerHTML += ' digits';
+}

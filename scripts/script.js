@@ -41,6 +41,7 @@ function clearDisplay() {
     lastPressed = null;
     lastOperator = null;
     display.innerHTML = roundNumber(displayValue);
+    stored.innerHTML = '';
     document.getElementById('+').disabled = false;
     document.getElementById('-').disabled = false;
     document.getElementById('*').disabled = false;
@@ -71,7 +72,7 @@ function clickHandler(number) {
         inputValue = [];
         displayValue = 0;
         storedValue = 0;
-        
+        stored.innerHTML = '';
         if (number === '.') {
             if (inputValue.length === 0) {
                 inputValue.push(0);
@@ -132,13 +133,14 @@ function backspace() {
         }
     }
     display.innerHTML = roundNumber(displayValue);
-    
+    stored.innerHTML = '';
     updateDebug();
 }
 
 function addClicked() {
-    if (!display.innerHTML.includes('+')) {
-        display.innerHTML += ' + ';
+    if (!stored.innerHTML.includes('+')) {
+        stored.innerHTML = roundNumber(displayValue);
+        stored.innerHTML += ' + ';
     }
     
     if (lastPressed === 'num') {
@@ -176,6 +178,8 @@ function addClicked() {
                 updateDebug();
             }
         }
+        stored.innerHTML = roundNumber(displayValue);
+        stored.innerHTML += ' + ';
         storedValue = displayValue;
     }
     else if (lastPressed === 'calc') {
@@ -188,8 +192,9 @@ function addClicked() {
 }
 
 function subClicked() {
-    if (!display.innerHTML.includes('-')) {
-        display.innerHTML += ' - ';
+    if (!stored.innerHTML.includes('-')) {
+        stored.innerHTML = roundNumber(displayValue);
+        stored.innerHTML += ' - ';
     }
     if (lastPressed === 'num') {
         if (lastOperator === 'add') {
@@ -224,6 +229,8 @@ function subClicked() {
                 updateDebug();
             }
         }
+        stored.innerHTML = roundNumber(displayValue);
+        stored.innerHTML += ' - ';
         storedValue = displayValue;
     }
     else if (lastPressed === 'calc') {
@@ -236,8 +243,9 @@ function subClicked() {
 }
 
 function mulClicked() {
-    if (!display.innerHTML.includes('&times')) {
-        display.innerHTML += ' &times ';
+    if (!stored.innerHTML.includes('&times')) {
+        stored.innerHTML = roundNumber(displayValue);
+        stored.innerHTML += ' &times ';
     }
     if (lastPressed === 'num') {
         if (lastOperator === 'add') {
@@ -272,6 +280,8 @@ function mulClicked() {
                 updateDebug();
             }
         }
+        stored.innerHTML = roundNumber(displayValue);
+        stored.innerHTML += ' &times ';
         storedValue = displayValue;
     }
     else if (lastPressed === 'calc') {
@@ -282,8 +292,9 @@ function mulClicked() {
 }
 
 function divClicked() {
-    if (!display.innerHTML.includes('&divide')) {
-        display.innerHTML += ' &divide ';
+    if (!stored.innerHTML.includes('&divide')) {
+        stored.innerHTML = roundNumber(displayValue);
+        stored.innerHTML += ' &divide ';
     }
     if (lastPressed === 'num') {
         if (lastOperator === 'add') {
@@ -318,6 +329,8 @@ function divClicked() {
                 updateDebug();
             }
         }
+        stored.innerHTML = roundNumber(displayValue);
+        stored.innerHTML += ' &divide ';
         storedValue = displayValue;
     }
     else if (lastPressed === 'calc') {
@@ -329,22 +342,30 @@ function divClicked() {
 
 
 function calculate() {
+    
     if (lastPressed === 'num') {
         if (lastOperator === 'add') {
+            stored.innerHTML = roundNumber(storedValue) + ' + ' + inputValue.join('') + ' = ';
+            
             displayValue += storedValue;
             display.innerHTML = roundNumber(displayValue)
-            
         }
         else if (lastOperator === 'sub') {
+            stored.innerHTML = roundNumber(storedValue) + ' - ' + inputValue.join('') + ' = ';
+
             displayValue = storedValue - displayValue;
             display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'mul') {
+            stored.innerHTML = roundNumber(storedValue) + ' &times ' + inputValue.join('') + ' = ';
+
             displayValue = storedValue * displayValue;
             display.innerHTML = roundNumber(displayValue)
         }
         else if (lastOperator === 'div') {
             if (displayValue !== 0) {
+                stored.innerHTML = roundNumber(storedValue) + ' &divide ' + inputValue.join('') + ' = ';
+
                 displayValue = storedValue/ displayValue;
                 display.innerHTML = roundNumber(displayValue);
             }
@@ -410,6 +431,8 @@ function calculate() {
             storedValue = displayValue;
             displayValue += newDisplayValue;
             display.innerHTML = roundNumber(displayValue)
+
+            stored.innerHTML = roundNumber(storedValue) + ' + ' + inputValue.join('') + ' = ';
         }
         else if (lastOperator === 'sub') {
             newDisplayValue = inputValue.join('');
@@ -417,6 +440,8 @@ function calculate() {
             storedValue = displayValue;
             displayValue -= newDisplayValue;
             display.innerHTML = roundNumber(displayValue)
+
+            stored.innerHTML = roundNumber(storedValue) + ' - ' + inputValue.join('') + ' = ';
         }
         else if (lastOperator === 'mul') {
             newDisplayValue = inputValue.join('');
@@ -424,6 +449,8 @@ function calculate() {
             storedValue = displayValue;
             displayValue *= newDisplayValue;
             display.innerHTML = roundNumber(displayValue)
+
+            stored.innerHTML = roundNumber(storedValue) + ' &times ' + inputValue.join('') + ' = ';
         }
         else if (lastOperator === 'div') {
             newDisplayValue = inputValue.join('');
@@ -432,6 +459,8 @@ function calculate() {
             if (displayValue !== 0) {
                 displayValue = storedValue / newDisplayValue;
                 display.innerHTML = roundNumber(displayValue)
+
+                stored.innerHTML = roundNumber(storedValue) + ' &divide ' + inputValue.join('') + ' = ';
             }
             else {
                 display.innerHTML = 'Cannot divide by zero';
@@ -449,8 +478,9 @@ function calculate() {
             }
         }
     }
-    if (lastPressed === null || lastOperator === null) {
-        //clearDisplay();
+    if (!stored.innerHTML.includes('=')) {
+        stored.innerHTML += inputValue.join('');
+        stored.innerHTML += ' = ';
     }
     lastPressed = 'calc';
     updateDebug();

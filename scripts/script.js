@@ -1,11 +1,13 @@
 let inputValue = [];
 let displayValue = 0;
+let storedDisplay = '';
 let storedValue = 0;
 let resultValue = 0;
 let lastPressed = null;
 let lastOperator = null;
 
 const display = document.getElementById('display');
+const stored = document.getElementById('stored');
 window.onload = clearDisplay;
 
 window.addEventListener("keydown", function (event) {
@@ -22,6 +24,7 @@ window.addEventListener("keydown", function (event) {
             case '/': divClicked(); break;
             case 'Enter': calculate(); break;
             case 'Escape': clearDisplay(); break;
+            case 'Backspace': backspace(); break;
             case '.': clickHandler('.'); break;
             default: break;
         }
@@ -49,6 +52,7 @@ function clickHandler(number) {
         if (inputValue[inputValue.length-1] !== '.') {
             inputValue = [];
             displayValue = 0;
+            updateStored();
         }
         if (number === '.') {
             if (inputValue.length === 0) {
@@ -67,6 +71,19 @@ function clickHandler(number) {
         inputValue = [];
         displayValue = 0;
         storedValue = 0;
+        
+        if (number === '.') {
+            if (inputValue.length === 0) {
+                inputValue.push(0);
+            }
+            if (!inputValue.includes('.')) {
+                inputValue.push(number);
+                displayValue = inputValue.join('');
+            }
+            display.innerHTML = displayValue;
+            lastPressed === '.';
+            return;
+        }
     }
     else if (number === '.') {
         if (inputValue.length === 0) {
@@ -77,8 +94,14 @@ function clickHandler(number) {
             displayValue = inputValue.join('');
         }
         display.innerHTML = displayValue;
+        lastPressed = '.';
         return;
-        
+    }
+    else if (number === 0 && lastPressed === '.') {
+        inputValue.push(0);
+        displayValue = inputValue.join('');
+        display.innerHTML = displayValue;
+        return;
     }
     else {
         displayValue[0] = number;
@@ -99,22 +122,31 @@ function clickHandler(number) {
 }
 
 function backspace() {
-    inputValue.pop();
-    displayValue = inputValue.join('');
-    displayValue = parseFloat(displayValue);
-    if (isNaN(displayValue)) {
-        displayValue = 0;
-        inputValue = [];
+    if (lastPressed !== 'calc') {
+        inputValue.pop();
+        displayValue = inputValue.join('');
+        displayValue = parseFloat(displayValue);
+        if (isNaN(displayValue)) {
+            displayValue = 0;
+            inputValue = [];
+        }
     }
     display.innerHTML = roundNumber(displayValue);
+    
     updateDebug();
 }
 
 function addClicked() {
+    if (!display.innerHTML.includes('+')) {
+        display.innerHTML += ' + ';
+    }
+    
     if (lastPressed === 'num') {
+        
         if (lastOperator === 'add') {
             displayValue += storedValue;
             display.innerHTML = roundNumber(displayValue)
+            
         }
         else if (lastOperator === 'sub') {
             displayValue = storedValue - displayValue;
@@ -156,6 +188,9 @@ function addClicked() {
 }
 
 function subClicked() {
+    if (!display.innerHTML.includes('-')) {
+        display.innerHTML += ' - ';
+    }
     if (lastPressed === 'num') {
         if (lastOperator === 'add') {
             displayValue += storedValue;
@@ -201,6 +236,9 @@ function subClicked() {
 }
 
 function mulClicked() {
+    if (!display.innerHTML.includes('&times')) {
+        display.innerHTML += ' &times ';
+    }
     if (lastPressed === 'num') {
         if (lastOperator === 'add') {
             displayValue += storedValue;
@@ -244,6 +282,9 @@ function mulClicked() {
 }
 
 function divClicked() {
+    if (!display.innerHTML.includes('&divide')) {
+        display.innerHTML += ' &divide ';
+    }
     if (lastPressed === 'num') {
         if (lastOperator === 'add') {
             displayValue += storedValue;
@@ -292,6 +333,7 @@ function calculate() {
         if (lastOperator === 'add') {
             displayValue += storedValue;
             display.innerHTML = roundNumber(displayValue)
+            
         }
         else if (lastOperator === 'sub') {
             displayValue = storedValue - displayValue;
@@ -321,10 +363,13 @@ function calculate() {
                 updateDebug();
             }
         }
+        else if (lastOperator === null) {
+            display.innerHTML = displayValue;
+        }
     }
     else if (lastPressed === 'add') {
         displayValue += storedValue;
-        display.innerHTML = roundNumber(displayValue)
+        display.innerHTML = displayValue;
         lastOperator = 'add';
     }
     else if (lastPressed === 'sub') {
@@ -405,7 +450,7 @@ function calculate() {
         }
     }
     if (lastPressed === null || lastOperator === null) {
-        clearDisplay();
+        //clearDisplay();
     }
     lastPressed = 'calc';
     updateDebug();
@@ -415,7 +460,15 @@ function roundNumber(num) {
     return Math.round((num + Number.EPSILON) * 1000) / 1000;
 }
 
-
+function updateStored() {
+    switch(lastPressed) {
+        case 'add': stored.innerHTML = storedValue + ' + ';break;
+        case 'sub': stored.innerHTML = storedValue + ' - ';break;
+        case 'mul': stored.innerHTML = storedValue + ' &times ';break;
+        case 'div': stored.innerHTML = storedValue + ' &divide ';break;
+        default: break;
+    }
+}
 
 
 function updateDebug() {
